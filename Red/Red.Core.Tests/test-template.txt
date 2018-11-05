@@ -1,0 +1,8 @@
+<# using System; #>
+<# var xmas = new DateTime(1900, 12, 25); #>
+
+This is a test template.
+
+<# for (var i = 0; i < 200; i++) { #>
+In <#= xmas.Year #>, Christmas <#= xmas > DateTime.Now ? "falls" : "fell" #> on a <#= xmas.DayOfWeek #>.<# xmas = xmas.AddYears(1); #>
+<# } #>

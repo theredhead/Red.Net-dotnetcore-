@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Red.Core\Red.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DataAccess\Generation\" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="DataAccess\Generation\DatabaseClassTemplate.tt" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="DataAccess\Generation\PreprocessedT4Template.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>PreprocessedT4Template.cs</LastGenOutput>
+      </None>
+      <None Update="DataAccess\Generation\DatabaseClass.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>DatabaseClass.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Remove="DataAccess\Generation\DatabaseClassTemplate.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="MySql.Data" Version="8.0.13" />
+    </ItemGroup>
+</Project>

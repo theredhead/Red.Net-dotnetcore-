@@ -1,0 +1,41 @@
+﻿<#@ template language="C#" #>
+
+<#@ assembly name="System.Runtime" #>
+<#@ assembly name="System.Reflection" #>
+<#@ assembly name="System.Data" #>
+
+<#@ assembly name="/Users/kris/Projects/Red.Net/Red/Red.Core/bin/Debug/netcoreapp2.1/Red.Core.dll" #>
+<#@ assembly name="/Users/kris/Projects/Red.Net/Red/Red.Data/bin/Debug/netcoreapp2.1/Red.Data.dll" #>
+<#@ assembly name="/Users/kris/.nuget/packages/mysql.data/8.0.13/lib/netcoreapp2.0/MySql.Data.dll" #>
+
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="MySql.Data.MySqlClient" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#@ import namespace="Red.Data" #>
+<#@ import namespace="Red.Data.DataAccess" #>
+<#@ import namespace="Red.Data.DataAccess.Generation" #>
+<# 
+
+    var cn = "Server=db.theredhead.nl;Database=MyDataProject;Uid=www;Pwd=www;";
+    var project = new DatabaseProject(cn);
+
+#>
+
+namespace <#= project.Database.Name #>.DataAccess
+{
+    public partial class <%= project.Database.Name %> : Database
+    {
+        <# foreach(ITableInfo table in project.Database.Tables) { #>
+        public <#= table.Name #>Table <#= table.Name #> {get; private set;}        
+        <# } #>
+        
+        public <#= project.Database.Name #>(string connectionString, ISqlDialect dialect) : base(dialect)
+        {
+        <# foreach(ITableInfo table in project.Database.Tables) { #>
+            <#= table.Name #> = new <#= table.Name #>( this["<#= table.Name #>"]); #>
+        <# } #>
+        }
+    }
+}
