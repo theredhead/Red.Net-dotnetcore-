@@ -12,7 +12,6 @@ namespace Red.Data.DataAccess
         FetchPredicate Contains(IColumnInfo column, string needle);
         FetchPredicate Equals(IColumnInfo column, object needle);
 
-        IDatabaseInfo ReverseEngineer(IDbConnection connection);
         DbType GetDbTypeFromString(string dataTypeName);
     }
 }

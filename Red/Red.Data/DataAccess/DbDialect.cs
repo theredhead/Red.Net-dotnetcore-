@@ -23,8 +23,7 @@ namespace Red.Data.DataAccess
 
         public FetchPredicate Equals(IColumnInfo column, object needle) 
             => CreatePredicate($"{QuoteName(column.Name)} = ?", needle);
-
-        public abstract IDatabaseInfo ReverseEngineer(IDbConnection connection);
+        
         public virtual DbType GetDbTypeFromString(string dataTypeName) 
             => Enum.TryParse(dataTypeName, true, out DbType result)
                 ? result

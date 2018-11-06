@@ -8,7 +8,8 @@ namespace Red.Data.DataAccess
         ISqlDialect Dialect { get; }
         string Name { get; }
         IEnumerable<ITableInfo> Tables { get; }
+        IDbConnection CreateConnection();
 
-        void Discover(IDbConnection connection);
+        void Discover();
     }
 }

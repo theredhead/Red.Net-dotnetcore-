@@ -40,16 +40,5 @@ namespace Red.Data.DataAccess.MySql
             }
 
         }
-
-        public override IDatabaseInfo ReverseEngineer(IDbConnection connection)
-        {
-            var database = new MySqlDatabaseInfo()
-            {
-                Dialect = this
-            };
-
-            database.Discover(connection);
-            return database;
-        }
     }
 }

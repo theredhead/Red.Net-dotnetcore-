@@ -2,27 +2,33 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using MySql.Data.MySqlClient;
+using Red.Data.DataAccess.Base;
 
 namespace Red.Data.DataAccess.MySql
 {
     [DebuggerDisplay("Database {Name}")]
-    public class MySqlDatabaseInfo : IDatabaseInfo
+    public class MySqlDatabaseInfo : Database
     {
-        private bool _alreadyDiscovered = false;
-        public ISqlDialect Dialect { get; internal set; }
-        public string Name { get; internal set; }
-        public IEnumerable<ITableInfo> Tables { get; internal set; } = new ITableInfo[] {};
-
-        public void Discover(IDbConnection connection)
+        public MySqlDatabaseInfo(ISqlDialect dialect) : base(dialect)
         {
-            if (_alreadyDiscovered) return;
-            _alreadyDiscovered = true;
+        }
 
-            Name = Name ?? connection
+        public MySqlDatabaseInfo(string connectionString, ISqlDialect dialect) : base(connectionString, dialect)
+        {
+        }
+
+        public override IDbConnection CreateConnection()
+        {
+            return new MySqlConnection(ConnectionString);
+        }
+        public override void Discover()
+        {
+            Name = Name ?? CreateConnection()
                        .CreateCommand("SELECT DATABASE()")
                        .ExecuteScalar() as string;
 
-            Tables = connection
+            using (var reader = CreateConnection()
                 .CreateCommand(
                     @"  SELECT 
                             TABLE_NAME 
@@ -30,23 +36,18 @@ namespace Red.Data.DataAccess.MySql
                         WHERE 
                             TABLE_SCHEMA=DATABASE() 
                         AND TABLE_TYPE='BASE TABLE'")
-                .ExecuteEnumerable((r) =>
-                    new MySqlTableInfo()
-                    {
-                        Database = this,
-                        Name = r.GetString(0),
-                    })
-                .ToArray(); // prevents multiple open readers
-
-            foreach (var table in Tables)
+                   .ExecuteReader())
             {
-                table.Discover(connection);
-            }
-        }
+                var name = reader.GetString(0);
+                var table = new MySqlTableInfo()
+                {
+                    Database = this,
+                    Name = name
+                };
+                table.Discover(CreateConnection());
+                _Tables.Add(name, table);
 
-        public MySqlFetchRequest CreateFetchRequest()
-        {
-            return new MySqlFetchRequest();
+            }
         }
     }
 }

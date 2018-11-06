@@ -2,23 +2,18 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using Red.Data.DataAccess.Base;
 
 namespace Red.Data.DataAccess.MySql
 {
     [DebuggerDisplay("Table {Name}")]
-    public class  MySqlTableInfo : ITableInfo
+    public class  MySqlTableInfo : TableInfo
     {
         private bool _alreadyDiscovered = false;
-        internal MySqlDatabaseInfo Database { get; set; }
-
-        public string Name { get; internal set; }
         private List<IColumnInfo> _primaryKey { get; } = new List<IColumnInfo>();
         private List<IColumnInfo> _columns { get; } = new List<IColumnInfo>();
 
-        public IEnumerable<IColumnInfo> PrimaryKey => _primaryKey;
-        public IEnumerable<IColumnInfo> Columns => _columns;
-
-        public void Discover(IDbConnection connection)
+        public override void Discover(IDbConnection connection)
         {
             if (_alreadyDiscovered) return;
             _alreadyDiscovered = true;
@@ -53,33 +48,11 @@ namespace Red.Data.DataAccess.MySql
 
         public virtual FetchRequest CreateFetchRequest()
         {
-            return new FetchRequest()
+            return new FetchRequest(Database)
             {
                 Table = this,
                 ColumnsToFetch = Columns.ToArray()
             };
-        }
-
-
-        public MySqlFetchRequest Search(string[] searchTexts, IEnumerable<IColumnInfo> columnsToSearch)
-        {
-            var request = Database.CreateFetchRequest();
-            request.Table = this;
-
-            foreach (var text in searchTexts)
-            {
-                foreach (var column in columnsToSearch)
-                {
-                    request.AddPredicate(Database.Dialect.Contains(column, text));
-                }
-            }
-
-            return request;
-        }
-        public MySqlFetchRequest Search(string[] searchTexts)
-        {
-            var searchableColumns = Columns.Where((c) => c.IsSomeString()).ToArray();
-            return Search(searchTexts, searchableColumns);
         }
     }
 }

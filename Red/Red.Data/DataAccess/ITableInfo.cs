@@ -10,5 +10,6 @@ namespace Red.Data.DataAccess
         IEnumerable<IColumnInfo> PrimaryKey { get; }
         IEnumerable<IColumnInfo> Columns { get; }
         void Discover(IDbConnection connection);
+        PredicateBuilder Where();
     }
 }

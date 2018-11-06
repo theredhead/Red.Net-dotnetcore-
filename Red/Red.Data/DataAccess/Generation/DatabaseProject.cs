@@ -16,7 +16,6 @@ namespace Red.Data.DataAccess.Generation
             ConnectionString = connectionString;
             Connection = new MySqlConnection(ConnectionString);
             var dialect = new MySqlDialect();
-            Database = dialect.ReverseEngineer(Connection);
         }
     }
 }

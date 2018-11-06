@@ -30,4 +30,9 @@
     <ItemGroup>
       <PackageReference Include="MySql.Data" Version="8.0.13" />
     </ItemGroup>
+    <ItemGroup>
+      <Reference Include="System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139">
+        <HintPath>..\..\..\..\.nuget\packages\system.data.sqlite.core\1.0.109.2\lib\netstandard2.0\System.Data.SQLite.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 </Project>
