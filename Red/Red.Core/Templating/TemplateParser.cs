@@ -8,17 +8,17 @@ namespace Red.Core.Templating
         private const string CloseCodeToken = "#>";
 
         private string Input { get; }
-        private int index = 0;
-        private int LineNumber = 0;
-        private int ColumnNumber = 0;
+        private int _index;
+        private int _lineNumber;
+        private int _columnNumber;
 
         private bool IsToken(string token)
         {
             var length = token.Length;
-            if ((index + length) > Input.Length)
+            if ((_index + length) > Input.Length)
                 return false;
 
-            return Input.Substring(index, length) == token;
+            return Input.Substring(_index, length) == token;
         }
 
         public TemplateParser(string template)
@@ -49,45 +49,45 @@ namespace Red.Core.Templating
 
         private bool AtEnd()
         {
-            return index > Input.Length - 1;
+            return _index > Input.Length - 1;
         }
 
         private void MoveToNextCharacter()
         {
-            switch (Input[index])
+            switch (Input[_index])
             {
                 case '\n':
-                    ColumnNumber = 0;
-                    LineNumber++;
+                    _columnNumber = 0;
+                    _lineNumber++;
                     break;
                 default:
-                    ColumnNumber++;
+                    _columnNumber++;
                     break;
             }
-            index++;
+            _index++;
         }
 
         private string ReadUntil(string token)
         {
-            var startIndex = index;
+            var startIndex = _index;
 
             while (!AtEnd() && !IsToken(token))
             {
                 MoveToNextCharacter();
             }
 
-            var result = Input.Substring(startIndex, index - startIndex);
+            var result = Input.Substring(startIndex, _index - startIndex);
             return result;
         }
         
         private TemplateSnippet ReadCodeSnippet()
         {
-            var line = LineNumber;
-            var column = ColumnNumber;
+            var line = _lineNumber;
+            var column = _columnNumber;
             
             var content = ReadUntil(CloseCodeToken);
 
-            foreach (var c in  CloseCodeToken.ToCharArray())
+            foreach (var c in CloseCodeToken.ToCharArray())
                 MoveToNextCharacter();
 
             content += CloseCodeToken;
@@ -97,8 +97,8 @@ namespace Red.Core.Templating
 
         private TemplateSnippet ReadTextSnippet()
         {
-            var line = LineNumber;
-            var column = ColumnNumber;
+            var line = _lineNumber;
+            var column = _columnNumber;
 
             var content = ReadUntil(OpenCodeToken);
             return new TextSnippet(content, line, column);

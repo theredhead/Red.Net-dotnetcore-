@@ -1,24 +1,24 @@
 ﻿using System;
 using System.IO;
 
-namespace Red.Core
+namespace Red.Core.Console
 {
     public class ConsoleHelper
     {
         public static string CaptureConsoleOutput(Action action)
         {
-            var storedOut = Console.Out;
+            var storedOut = System.Console.Out;
             using (var sw = new StringWriter())
             {
                 try
                 {
-                    Console.SetOut(sw);
+                    System.Console.SetOut(sw);
                     action();
                     return sw.ToString();
                 }
                 finally
                 {
-                    Console.SetOut(storedOut);
+                    System.Console.SetOut(storedOut);
                 }
             }
         }

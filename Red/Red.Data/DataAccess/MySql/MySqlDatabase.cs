@@ -1,26 +1,26 @@
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using MySql.Data.MySqlClient;
 using Red.Data.DataAccess.Base;
 
 namespace Red.Data.DataAccess.MySql
 {
     [DebuggerDisplay("Database {Name}")]
-    public class MySqlDatabaseInfo : Database
+    public class MySqlDatabase : Database
     {
-        public MySqlDatabaseInfo(ISqlDialect dialect) : base(dialect)
+        protected MySqlDatabase() : base(new MySqlDialect())
         {
         }
 
-        public MySqlDatabaseInfo(string connectionString, ISqlDialect dialect) : base(connectionString, dialect)
+        public MySqlDatabase(string connectionString) : base(connectionString, new MySqlDialect())
         {
         }
 
         public override IDbConnection CreateConnection()
         {
-            return new MySqlConnection(ConnectionString);
+            var connection = new MySqlConnection(ConnectionString);
+            connection.Open();
+            return connection;
         }
         public override void Discover()
         {
@@ -38,15 +38,17 @@ namespace Red.Data.DataAccess.MySql
                         AND TABLE_TYPE='BASE TABLE'")
                    .ExecuteReader())
             {
-                var name = reader.GetString(0);
-                var table = new MySqlTableInfo()
+                while(reader.Read())
                 {
-                    Database = this,
-                    Name = name
-                };
-                table.Discover(CreateConnection());
-                _Tables.Add(name, table);
-
+                    var name = reader.GetString(0);
+                    var table = new MySqlTableInfo()
+                    {
+                        Database = this,
+                        Name = name
+                    };
+                    table.Discover(CreateConnection());
+                    _Tables.Add(name, table);
+                }
             }
         }
     }

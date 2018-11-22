@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using System.Xml;
 using Red.Core;
-using Red.Data.DataAccess.Base;
 
 namespace Red.Data.DataAccess
 {
@@ -36,7 +35,7 @@ namespace Red.Data.DataAccess
             _predicates.Remove(predicate);
         }
 
-        public virtual IDbCommand GetCommand(IDbConnection connection)
+        protected virtual IDbCommand GetCommand(IDbConnection connection)
         {
             Sanity.Enforce<NullReferenceException>(Table != null, nameof(Table));
 

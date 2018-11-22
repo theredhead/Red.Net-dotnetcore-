@@ -9,6 +9,7 @@
       <Compile Remove="DataAccess\**" />
       <EmbeddedResource Remove="DataAccess\**" />
       <None Remove="DataAccess\**" />
+      <Compile Remove="Syntax\SyntaxTree.cs" />
     </ItemGroup>
 
     <ItemGroup>

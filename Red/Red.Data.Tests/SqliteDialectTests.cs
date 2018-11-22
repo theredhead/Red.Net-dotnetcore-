@@ -7,7 +7,7 @@ namespace Red.Data.Tests
     public class SqliteDialectTests : SqliteConnectedTestClass
     {
         [Fact]
-        public void Test_simple_Query()
+        public void Can_build_Predicates_To_Find_Steve_Johnson()
         {
             var database = new SqliteDatabase("Data Source=chinook.db;Version=3;");
             
@@ -20,8 +20,10 @@ namespace Red.Data.Tests
                 .Request;
 
             var data = request.FetchDataTable();
-            
 
+            Assert.Equal(1, data.Rows.Count); // Expected number of rows
+            Assert.Equal("Steve", data.Rows[0]["FirstName"]);
+            Assert.Equal("Johnson", data.Rows[0]["LastName"]);
         }
     }
 }

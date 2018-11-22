@@ -15,7 +15,7 @@ namespace Red.Core
         /// <param name="messageFormat"></param>
         /// <param name="replacements"></param>
         /// <typeparam name="T"></typeparam>
-        /// <exception cref="???"></exception>
+        /// <exception></exception>
         public static void Enforce<T>(bool predicate, string messageFormat = null, Replacements replacements=null) where T : Exception
         {
             if (predicate) return;
@@ -40,9 +40,9 @@ namespace Red.Core
         {
             var types = string.IsNullOrEmpty(message)
                 ? new Type[] { }
-                : new Type[] { typeof(string) }; 
+                : new[] { typeof(string) }; 
 
-            var args= string.IsNullOrEmpty(message)
+            var args = string.IsNullOrEmpty(message)
                 ? new object[] { }
                 : new object[] { message }; 
 
@@ -58,7 +58,7 @@ namespace Red.Core
 
             return message == null
                 ? ctor.Invoke(new object[] { }) as Exception
-                : ctor.Invoke(new object[] {message}) as Exception;
+                : ctor.Invoke(args) as Exception;
         }
     }
 }

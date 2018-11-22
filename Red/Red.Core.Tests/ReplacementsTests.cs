@@ -50,8 +50,8 @@ namespace Red.Core.Tests
         [Fact]
         void Replacements__Does_not_allow_mismatch_between_Placeholders_and_Values()
         {
-            var placeholders = new string[] {"1"}; 
-            var values = new string[] { "1", "2" };
+            var placeholders = new[] {"1"}; 
+            var values = new[] { "1", "2" };
             var exception = Assert.Throws<PlaceholderReplacementCountMismatchException>(() => new Replacements(placeholders, values));
 
             Assert.NotNull(exception);

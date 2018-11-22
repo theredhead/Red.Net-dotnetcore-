@@ -9,9 +9,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DataAccess\Generation\" />
-    </ItemGroup>
-    <ItemGroup>
       <None Remove="DataAccess\Generation\DatabaseClassTemplate.tt" />
     </ItemGroup>
     <ItemGroup>
@@ -26,6 +23,7 @@
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="DataAccess\Generation\DatabaseClassTemplate.cs" />
+      <Compile Remove="DataAccess\Generation\CodeGenerator.cs" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="MySql.Data" Version="8.0.13" />

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Red.Core
 {
+    /// <inheritdoc />
     /// <summary>
     /// Provides a way to work with embedded placeholders in strings
     /// </summary>
@@ -12,12 +13,16 @@ namespace Red.Core
         public string Prefix { get; set; } = string.Empty;
         public string Suffix { get; set; } = string.Empty;
         
-        public Replacements() : base()
+        public Replacements()
         {
         }
 
         public Replacements(Dictionary<string,string> replacements) : this()
         {
+            foreach (var replacement in replacements)
+            {
+                Add(replacement.Key, replacement.Value);
+            }
         }
 
         public Replacements(string[] placeholders, string[] values) : this()

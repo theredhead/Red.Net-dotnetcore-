@@ -11,7 +11,7 @@ namespace Red.Data.DataAccess.MySql
             return new MySqlPredicate(text, arguments);
         }
 
-        public override DbType GetDbTypeFromString(string dataTypeName)
+        public new DbType GetDbTypeFromString(string dataTypeName)
         {
             switch (dataTypeName.ToUpperInvariant())
             {

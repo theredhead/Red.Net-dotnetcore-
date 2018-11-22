@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Red.Data.DataAccess.MySql;
 
 namespace Red.Data.DataAccess.Base
 {
@@ -42,7 +41,8 @@ namespace Red.Data.DataAccess.Base
         public string Name { get; internal set;}
         public IDatabaseInfo Database { get; internal set; }
         public IEnumerable<IColumnInfo> PrimaryKey { get; } = new IColumnInfo[] {};
-        public IEnumerable<IColumnInfo> Columns { get; } = new IColumnInfo[] {};
+        protected Dictionary<string, IColumnInfo> _Columns { get; } = new Dictionary<string, IColumnInfo>();
+        public IEnumerable<IColumnInfo> Columns => _Columns.Values;
         
         public FetchRequest CreateFetchRequest()
         {
@@ -62,9 +62,11 @@ namespace Red.Data.DataAccess.Base
             var request = CreateFetchRequest();
             request.Table = this;
 
+            var columns = columnsToSearch.ToArray();
+            
             foreach (var text in searchTexts)
             {
-                foreach (var column in columnsToSearch)
+                foreach (var column in columns)
                 {
                     request.AddPredicate(Database.Dialect.Contains(column, text));
                 }
@@ -79,7 +81,7 @@ namespace Red.Data.DataAccess.Base
         }
         public PredicateBuilder Where()
         {
-            var request = new FetchRequest(this.Database)
+            var request = new FetchRequest(Database)
             {
                 Table = this
             };

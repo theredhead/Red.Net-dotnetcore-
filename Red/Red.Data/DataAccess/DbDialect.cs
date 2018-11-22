@@ -7,7 +7,10 @@ namespace Red.Data.DataAccess
     {
         public abstract string QuoteName(string name);
 
-        protected abstract FetchPredicate CreatePredicate(string text, params object[] arguments);
+        protected virtual FetchPredicate CreatePredicate(string text, params object[] arguments)
+        {
+            return new FetchPredicate(text, arguments);
+        }
 
         public FetchPredicate Between<T>(IColumnInfo column, T minimumValue, T maximumValue) 
             => CreatePredicate($"{QuoteName(column.Name)} BETWEEN ? AND ?", minimumValue, maximumValue);
@@ -24,7 +27,7 @@ namespace Red.Data.DataAccess
         public FetchPredicate Equals(IColumnInfo column, object needle) 
             => CreatePredicate($"{QuoteName(column.Name)} = ?", needle);
         
-        public virtual DbType GetDbTypeFromString(string dataTypeName) 
+        public DbType GetDbTypeFromString(string dataTypeName) 
             => Enum.TryParse(dataTypeName, true, out DbType result)
                 ? result
                 : DbType.Object;

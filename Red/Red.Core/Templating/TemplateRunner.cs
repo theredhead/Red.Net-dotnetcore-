@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using Red.Core.Console;
 
 namespace Red.Core.Templating
 {
@@ -38,17 +41,46 @@ namespace Red.Core.Templating
             return builder.ToString();
         }
 
+        public class TemplateArguments<T>
+        {
+            public StringWriter Output = new StringWriter();
+            public T Arguments;
+            public TemplateArguments(T arguments)
+            {
+                Arguments = arguments;
+            }
+        }
         public string Execute(Template template)
         {
+            return Execute<object>(template, null);
+        }
+
+        public string Execute<T>(Template template, T arguments)
+        {
+            // ReSharper disable once UnusedVariable
+            return Execute(template, arguments, out var ignored);
+        }
+        
+        public string Execute<T>(Template template, T arguments, out object result)
+        {
             var code = Run(template);
+
+            result = null;
+            object executionResult = null;
+            var globals = new TemplateArguments<T>(arguments);
+
             var output = ConsoleHelper.CaptureConsoleOutput(() =>
             {
-                object result = null;
-                CSharpScript.EvaluateAsync(code)
-                    .ContinueWith(s => result = s.Result).Wait();
-            });
+                var options = ScriptOptions.Default.WithReferences(
+                    typeof(System.Console).Assembly,
+                    typeof(ConsoleHelper).Assembly
+                );
 
-            return output;
+                CSharpScript.EvaluateAsync(code, options, globals)
+                    .ContinueWith(s => executionResult = s.Result).Wait();
+            });
+            result = executionResult;
+            return globals.Output.ToString();
         }
 
         private void AppendSnippet(TemplateSnippet snippet)
@@ -58,11 +90,11 @@ namespace Red.Core.Templating
                 Write(CurrentIndent);
                 WriteLine($"// line #{snippet.LineNumber}");
 
-                if (codeSnippet.Code.StartsWith("="))
+                if (codeSnippet.Code.StartsWith("=", System.StringComparison.Ordinal))
                 {
                     var expression = codeSnippet.Code.Substring(1);
                     Write(CurrentIndent);
-                    WriteLine($"Console.Write({expression});");
+                    WriteLine($"Output.Write({expression});");
                 }
                 else
                 {
@@ -78,7 +110,7 @@ namespace Red.Core.Templating
                     WriteLine($"// line #{snippet.LineNumber}");
                     
                     Write(CurrentIndent);
-                    Write("Console.Write(\"");
+                    Write("Output.Write(\"");
     
                     Write(Sanitize(snippet.Text));
     

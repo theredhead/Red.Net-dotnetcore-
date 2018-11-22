@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Red.Core.Templating
+﻿namespace Red.Core.Templating
 {
     public class CodeSnippet : TemplateSnippet
     {

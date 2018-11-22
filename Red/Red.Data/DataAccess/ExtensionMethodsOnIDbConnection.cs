@@ -21,7 +21,14 @@ namespace Red.Data.DataAccess
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static string PrefixWithAtColon(string name) => $":{name}";
+        public static string PrefixWithAColon(string name) => $":{name}";
+        /// <summary>
+        /// Standard function you can assign to the ParameterFormattingFunc
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string PrefixWithDollarSign(string name) => $"${name}";
+
         /// <summary>
         /// Allows external influence on the way a token is transformed to a parameter
         /// </summary>
@@ -56,7 +63,7 @@ namespace Red.Data.DataAccess
         /// <returns></returns>
         private static CommandTextWithParameters ExpandPositionalParameters(string text, object[] arguments)
         {
-            const char ESCAPE_CHAR = '\\';
+            const char escapeChar = '\\';
 
             var result = new CommandTextWithParameters();
             var sb = new StringBuilder();
@@ -77,10 +84,10 @@ namespace Red.Data.DataAccess
                         continue;
 
                     case '?':
-                        if (previous != ESCAPE_CHAR)
+                        if (previous != escapeChar)
                         {
                             var value = arguments[numberOfPlaceholdersSeen];
-                            var parameterName = "";
+                            string parameterName;
 
                             if (parameterMap.ContainsKey(value)) // if we've already seen this value...
                                 parameterName = parameterMap[value]; // reuse its' name instead of binding it again under a new name

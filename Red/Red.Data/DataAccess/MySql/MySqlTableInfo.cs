@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using Red.Data.DataAccess.Base;
 
 namespace Red.Data.DataAccess.MySql
@@ -9,9 +8,8 @@ namespace Red.Data.DataAccess.MySql
     [DebuggerDisplay("Table {Name}")]
     public class  MySqlTableInfo : TableInfo
     {
-        private bool _alreadyDiscovered = false;
+        private bool _alreadyDiscovered;
         private List<IColumnInfo> _primaryKey { get; } = new List<IColumnInfo>();
-        private List<IColumnInfo> _columns { get; } = new List<IColumnInfo>();
 
         public override void Discover(IDbConnection connection)
         {
@@ -36,7 +34,7 @@ namespace Red.Data.DataAccess.MySql
                         IsNullable = r.GetString(2) == "YES"
                     }))
             {
-                _columns.Add(columnInfo);
+                _Columns.Add(columnInfo.Name, columnInfo);
             }
 
         }
@@ -44,15 +42,6 @@ namespace Red.Data.DataAccess.MySql
         private DbType DiscoverDbType(string dataTypeName)
         {
             return Database.Dialect.GetDbTypeFromString(dataTypeName);
-        }
-
-        public virtual FetchRequest CreateFetchRequest()
-        {
-            return new FetchRequest(Database)
-            {
-                Table = this,
-                ColumnsToFetch = Columns.ToArray()
-            };
         }
     }
 }
